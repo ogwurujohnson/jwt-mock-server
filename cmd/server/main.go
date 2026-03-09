@@ -5,7 +5,6 @@ import (
 	"crypto/rsa"
 	"log"
 	"github.com/ogwurujohnson/mock-jwk-server/internal/handler"
-	"github.com/ogwurujohnson/mock-jwk-server/internal/token"
 	"github.com/ogwurujohnson/mock-jwk-server/internal/jwk"
 	"net/http"
 )
@@ -21,16 +20,7 @@ func main() {
 	// 3. Setup Routes
 	http.HandleFunc("/.well-known/jwks.json", handler.JWKSHandler(set))
 
-	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
-    // We reuse the same privateKey and kid generated at startup
-    tString, err := token.GenerateToken(privateKey, "mock-key-id-1", "http://localhost:8080")
-    if err != nil {
-        http.Error(w, "Failed to generate token", 500)
-        return
-    }
-
-    w.Write([]byte(tString))
-	})
+	http.HandleFunc("/token", handler.TokenHandler(privateKey, "mock-key-id-1", "http://localhost:8080"))
 
 	http.HandleFunc("/verify", handler.VerifyHandler(&privateKey.PublicKey))
 
