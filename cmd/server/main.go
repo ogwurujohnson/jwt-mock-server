@@ -32,6 +32,8 @@ func main() {
     w.Write([]byte(tString))
 	})
 
+	http.HandleFunc("/verify", handler.VerifyHandler(&privateKey.PublicKey))
+
 	log.Println("Mock JWK Server starting on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
